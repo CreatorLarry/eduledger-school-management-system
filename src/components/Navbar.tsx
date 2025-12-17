@@ -16,7 +16,7 @@ const  Navbar = () => {
                 </div>
                 <div className="bg-white rounded-full w-7 h-7 flex items-center justify-center cursor-ponter relative">
                     <Image src="/announcement.png" alt="" width={20} height={20}/>
-                    <div className="absolute -top-3 -right-3 w-4 h-4 flex items-center justify-center bg-purple-500 text-white rounded-full text-sm">1</div>
+                    <div className="absolute -top-3 -right-3 w-4 h-4 flex items-center justify-center bg-purple-500 text-white rounded-full  text-[10px]">2</div>
                 </div>
                 <div className="flex flex-col">
                     <span className="text-xs leading-3 font-medium">Lawrence Mwangi</span>
