@@ -94,8 +94,8 @@ const FinanceChart = () => {
                     <Tooltip/>
                     <Legend align="center" verticalAlign="top"
                             wrapperStyle={{paddingTop: '10px', paddingBottom: '30px'}}/>
-                    <Line type="monotone" dataKey="income" stroke="#366eb2" activeDot={{r: 8}}/>
-                    <Line type="monotone" dataKey="expense" stroke="#ffcd05" strokeWidth={5}/>
+                    <Line type="monotone" dataKey="income" stroke="#366eb2" activeDot={{r: 8}} strokeWidth={4}/>
+                    <Line type="monotone" dataKey="expense" stroke="#ffcd05" strokeWidth={4}/>
                 </LineChart>
             </ResponsiveContainer>
         </div>
