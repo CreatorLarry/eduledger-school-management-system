@@ -1,9 +1,10 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import {usePathname} from "next/navigation";
-import { role as defaultRole } from "@/lib/data";
+import {role as defaultRole} from "@/lib/data";
 
 const menuItems = [
     {
@@ -125,7 +126,7 @@ const Menu = () => {
     const allowedRoles = ["admin", "teacher", "student", "parent"] as const;
     type Role = typeof allowedRoles[number];
 
-    // Persisted role across navigations (e.g., when visiting routes without a role segment like /list/teachers)
+    // Persisted a role across navigations (e.g., when visiting routes without a role segment like /list/teachers)
     const [effectiveRole, setEffectiveRole] = useState<Role>(() => {
         if (typeof window !== "undefined") {
             const stored = window.sessionStorage.getItem("effectiveRole");
@@ -137,7 +138,7 @@ const Menu = () => {
         return (defaultRole as Role) ?? ("admin" as Role);
     });
 
-    // Derive role from current pathname when possible and keep it in sessionStorage
+    // Derive a role from the current pathname when possible and keep it in sessionStorage
     useEffect(() => {
         const firstSegment = pathname?.split("/")[1] ?? "";
         const hasRoleInPath = (allowedRoles as readonly string[]).includes(firstSegment);
@@ -150,7 +151,7 @@ const Menu = () => {
                 // ignore storage errors
             }
         }
-    }, [pathname]);
+    }, [allowedRoles, pathname]);
 
     return (
         <div className="mt-4 text-sm">

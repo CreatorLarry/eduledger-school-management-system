@@ -23,9 +23,15 @@ const data = [
 
     },
     {
-        name: 'April',
+        name: 'Apr',
         income: 2780,
         expense: 3908,
+
+    },
+    {
+        name: 'May',
+        income: 2500,
+        expense: 4200,
 
     },
     {
@@ -67,7 +73,6 @@ const data = [
         expense: 4300,
     },
 ];
-
 const FinanceChart = () => {
     return (
         <div className='bg-white rounded-xl h-full p-4'>
