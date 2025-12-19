@@ -1,6 +1,9 @@
-import Link from "next/link";
+"use client";
 import Image from "next/image";
-import {role} from "@/lib/data";
+import Link from "next/link";
+import {useEffect, useMemo, useState} from "react";
+import {usePathname} from "next/navigation";
+import { role as defaultRole } from "@/lib/data";
 
 const menuItems = [
     {
@@ -118,27 +121,62 @@ const menuItems = [
 ];
 
 const Menu = () => {
+    const pathname = usePathname();
+    const allowedRoles = ["admin", "teacher", "student", "parent"] as const;
+    type Role = typeof allowedRoles[number];
+
+    // Persisted role across navigations (e.g., when visiting routes without a role segment like /list/teachers)
+    const [effectiveRole, setEffectiveRole] = useState<Role>(() => {
+        if (typeof window !== "undefined") {
+            const stored = window.sessionStorage.getItem("effectiveRole");
+            if (stored && (allowedRoles as readonly string[]).includes(stored)) {
+                return stored as Role;
+            }
+        }
+        // Fallback to default role from data.ts
+        return (defaultRole as Role) ?? ("admin" as Role);
+    });
+
+    // Derive role from current pathname when possible and keep it in sessionStorage
+    useEffect(() => {
+        const firstSegment = pathname?.split("/")[1] ?? "";
+        const hasRoleInPath = (allowedRoles as readonly string[]).includes(firstSegment);
+        if (hasRoleInPath) {
+            const newRole = firstSegment as Role;
+            setEffectiveRole(prev => (prev !== newRole ? newRole : prev));
+            try {
+                window.sessionStorage.setItem("effectiveRole", newRole);
+            } catch (e) {
+                // ignore storage errors
+            }
+        }
+    }, [pathname]);
+
     return (
-        <div className='mt-4 text-sm'>{menuItems.map(i => (
-            <div className='flex flex-col gap-2' key={i.title}>
-                <span className='hidden lg:block text-gray-400 font-light my-4'>
-                    {i.title}
-                </span>
-                {i.items.map(
-                    item => {
-                        if (item.visible.includes(role)) {
+        <div className="mt-4 text-sm">
+            {menuItems.map((i) => (
+                <div className="flex flex-col gap-2" key={i.title}>
+          <span className="hidden lg:block text-gray-400 font-light my-4">
+            {i.title}
+          </span>
+                    {i.items.map((item) => {
+                        if (item.visible.includes(effectiveRole)) {
                             return (
-                                <Link href={item.href} key={item.label}
-                                      className='flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 md:px-2 rounded-md hover:bg-lamaSkyLight'>
-                                    <Image src={item.icon} alt='' width={20} height={20}/>
-                                    <span className='hidden lg:block'>{item.label}</span>
+                                <Link
+                                    href={item.href}
+                                    key={item.label}
+                                    className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 md:px-2 rounded-md hover:bg-lamaSkyLight"
+                                >
+                                    <Image src={item.icon} alt="" width={20} height={20}/>
+                                    <span className="hidden lg:block">{item.label}</span>
                                 </Link>
-                            )
+                            );
                         }
-                    }
-                )}
-            </div>
-        ))}</div>
-    )
-}
-export default Menu
+                    })}
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default Menu;
