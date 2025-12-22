@@ -7,18 +7,15 @@ import Table from "@/components/Table";
 import Link from "next/link";
 import {useEffect, useState} from "react";
 import {usePathname} from "next/navigation";
-import {role as defaultRole, studentsData} from "@/lib/data";
+import {role as defaultRole, parentsData} from "@/lib/data";
 import FormModal from "@/components/FormModal";
 
-type Student = {
+type Parent = {
     id: number;
-    studentId: string;
     name: string;
     email?: string;
-    photo: string;
-    phone?: string;
-    grade: number[];
-    class: string;
+    students: string[];
+    phone: string;
     address: string;
 }
 
@@ -27,10 +24,7 @@ const columns = [
         header: 'Info', accessor: 'info'
     },
     {
-        header: 'Student ID', accessor: 'studentId', className: 'hidden md:table-cell'
-    },
-    {
-        header: 'Grade', accessor: 'grade', className: 'hidden md:table-cell'
+        header: 'Student Name', accessor: 'students', className: 'hidden md:table-cell'
     },
     {
         header: 'Phone', accessor: 'phone', className: 'hidden lg:table-cell'
@@ -42,7 +36,7 @@ const columns = [
         header: 'Actions', accessor: 'actions'
     },
 ]
-const StudentListPage = () => {
+const ParentListPage = () => {
     const pathname = usePathname();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const allowedRoles = ["admin", "teacher", "student", "parent"] as const;
@@ -71,50 +65,39 @@ const StudentListPage = () => {
         }
     }, [allowedRoles, pathname]);
 
-    const renderRow = (item: Student) => (
-        <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
-            <td className="flex items-center gap-4 p-4">
-                <Image src={item.photo} alt="" width={40} height={40}
-                       className="md:hidden xl:block w-10 h-10 rounded-full object-cover"/>
-                <div className="flex flex-col">
-                    <h3 className="font-semibold">{item.name}</h3>
-                    <p className="text-xs text-gray-500">{item.class}</p>
-                </div>
-            </td>
-            <td className="hidden md:table-cell">{item.studentId}</td>
-            <td className="hidden md:table-cell">{item.grade}</td>
-            <td className="hidden lg:table-cell">{item.phone}</td>
-            <td className="hidden lg:table-cell">{item.address}</td>
-            <td>
-                <div className="flex items-center gap-2">
-                    {
-                        effectiveRole === "admin" && (
-                            // <button
-                            //     onClick={() => {
-                            //         // TODO: Implement delete functionality
-                            //         console.log('Delete student:', item.id);
-                            //     }}
-                            //     className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurpleLight"
-                            // >
-                            //     <Image src="/delete.png" alt="" width={16} height={16}/>
-                            // </button>
-                            <>
-                                <FormModal table="student" type="update" data={item}/>
-                                <FormModal table="student" type="delete" id={item.id}/>
-                            </>
+    const renderRow = (item: Parent) => (
+            <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+                <td className="flex items-center gap-4 p-4">
+                    <div className="flex flex-col">
+                        <h3 className="font-semibold">{item.name}</h3>
+                        <p className="text-xs text-gray-500">{item?.email}</p>
+                    </div>
+                </td>
+                <td className="hidden md:table-cell">{item.students.join(',')}</td>
+                <td className="hidden lg:table-cell">{item.phone}</td>
+                <td className="hidden lg:table-cell">{item.address}</td>
+                <td>
+                    <div className="flex items-center gap-2">
+                        {
 
+                            effectiveRole === "admin" && (
+                                <>
+                                    <FormModal table="parent" type="update" data={item}/>
 
-                        )
-                    }
-                </div>
-            </td>
-        </tr>
-    );
+                                    <FormModal table="parent" type="delete" id={item.id}/>
+                                </>
+                            )
+                        }
+                    </div>
+                </td>
+            </tr>
+        )
+    ;
     return (
         <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
             {/*TOP*/}
             <div className="flex items-center justify-between gap-4">
-                <h1 className="hidden md:block text-lg font-semibold">All Students</h1>
+                <h1 className="hidden md:block text-lg font-semibold">All Parents</h1>
                 <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
                     <TableSearch/>
                     <div className="flex items-center gap-4 self-end">
@@ -136,19 +119,15 @@ const StudentListPage = () => {
                         </button>
                         {
                             effectiveRole === "admin" && (
-                                // <button
-                                //     className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-                                //     <Image src="/plus.png" alt="" width={14} height={14}/>
-                                // </button>
-                                <FormModal table="student" type="create" />
+                                <FormModal table="parent" type="create"/>
                             )
                         }                   </div>
                 </div>
             </div>
             {/*LIST*/}
-            <Table columns={columns} renderRow={renderRow} data={studentsData}/> {/*PAGINATION*/}
+            <Table columns={columns} renderRow={renderRow} data={parentsData}/> {/*PAGINATION*/}
             <Pagination/>
         </div>
     )
 }
-export default StudentListPage
+export default ParentListPage
